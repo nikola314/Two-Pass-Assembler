@@ -1,0 +1,14 @@
+//#ifndef __EXCEPTIONS.H
+//#define __EXCEPTIONS.H
+
+#define EXCEPTION_INVALID_ARGUMENTS 1
+#define EXCEPTION_WRONG_INPUT_FILE 2
+
+
+
+
+
+
+
+
+//#endif
