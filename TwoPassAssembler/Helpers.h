@@ -11,5 +11,7 @@ public:
 	static WordType getType(std::string value);
 	static DirectiveType getDirectiveType(std::string directive);
 	static InstructionType getInstructionType(std::string instruction);
+	static AddressType getAddressType(std::string address);
+	static int getOperandLength(ParsedLine line);
 };
 

@@ -8,7 +8,7 @@ using namespace std;
 class SymbolTable
 {
 private:
-	vector<Symbol> table;
+	vector<Symbol*> table;
 	static unsigned int lastEntryId;
 public:
 	SymbolTable();
@@ -17,5 +17,6 @@ public:
 	bool isDuplicateEntry(std::string name);
 	Symbol* getSymbol(std::string name);
 
+	/*	TESTING	*/
+	friend class TwoPassAssembler;
 };
-

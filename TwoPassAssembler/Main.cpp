@@ -12,7 +12,7 @@ using namespace std;
 typedef vector<string> ParsedLine;
 typedef vector<ParsedLine> ParsedFile;
 
-// TESTING:
+/******************		TESTING		***********************/
 void printParsedFile(ParsedFile file) {
 	for (int i = 0; i < file.size(); i++) {
 		for (int j = 0; j < file[i].size(); j++) {
@@ -22,6 +22,9 @@ void printParsedFile(ParsedFile file) {
 		printf("\n");
 	}
 }
+
+/*********************************************************/
+
 
 ParsedFile parseInputFile(string filePath) {
 	ParsedFile file;
@@ -100,6 +103,12 @@ int main(int argc, char** argv)
 
 		TwoPassAssembler assembler(inputFile);
 		assembler.generateAssembly(outputFileName);
+
+		// Test
+		assembler.printSymbolTable();
+		assembler.printSections();
+		assembler.printErrors();
+		getchar();
 	}
 	catch (int exceptionCode) {
 		// TODO: print the exception
