@@ -10,13 +10,13 @@ public:
 	TwoPassAssembler(ParsedFile file);
 	~TwoPassAssembler();
 	void generateAssembly(std::string outputFilePath);
+	static std::vector<string> errors;
 
 private:
 	unsigned int locationCounter;
 
 	ParsedFile inputFile;
-	std::vector<Section*> sections;
-	std::vector<string> errors;
+	std::vector<Section*> sections;	
 	std::map<string, unsigned int> equMap;
 	Section* currentSection = nullptr;
 	SymbolTable symbolTable;

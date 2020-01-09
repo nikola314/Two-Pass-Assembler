@@ -5,6 +5,8 @@
 
 using namespace std;
 
+vector<string> TwoPassAssembler::errors;
+
 TwoPassAssembler::TwoPassAssembler(ParsedFile file)
 {
 	this->inputFile = file;
@@ -93,31 +95,8 @@ void TwoPassAssembler::firstPassInstruction(ParsedLine line, InstructionType typ
 {
 	string instruction = line.at(0);
 	int instructionLength = 0;
-	if (	// 0 operands
-		type == InstructionType::RET ||
-		type == InstructionType::IRET ||
-		type == InstructionType::HALT
-		) {
-		instructionLength = 1;
-	}
-	else if (	// 1 operand
-		type == InstructionType::INT ||
-		type == InstructionType::NOT ||
-		type == InstructionType::PUSH ||
-		type == InstructionType::POP ||
-		type == InstructionType::JMP ||
-		type == InstructionType::JEQ ||
-		type == InstructionType::JNE ||
-		type == InstructionType::JGT ||
-		type == InstructionType::CALL
-		) {
-		int operandLength = Helpers::getOperandLength(line);
-		instructionLength = 1 + operandLength;
-	}
-	else {	// 2 operands
-		int operandLength = Helpers::getOperandLength(line);
-		instructionLength = 1 + 2 * operandLength;
-	}
+	instructionLength = Helpers::getInstructionLength(line, type);
+
 	currentSection->counter += instructionLength;
 }
 
@@ -191,7 +170,11 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 		type == DirectiveType::DATA ||
 		type == DirectiveType::SECTION
 	) {
-		string sectionName = line.at(0);
+		int index = 0;
+		if (type == DirectiveType::SECTION) {
+			index = 1;
+		}
+		string sectionName = line.at(index);
 		currentSection = getSection(sectionName);
 	}
 	if (type == DirectiveType::GLOBAL) {

@@ -1,6 +1,7 @@
 #include "Helpers.h"
 #include "Regexes.h"
 #include <regex>
+#include "TwoPassAssembler.h"
 
 using namespace std;
 
@@ -88,6 +89,82 @@ AddressType Helpers::getAddressType(std::string address)
 	return AddressType();
 }
 
+AddressMode Helpers::getAddressMode(std::string address, int operandLength)
+{
+	AddressType type = getAddressType(address);
+	if (type == AddressType::IMMED ||
+		type == AddressType::IMMED_SYM) {
+		return AddressMode::A_IMMED;
+	}
+	if (type == AddressType::ABS ||
+		type == AddressType::ABS_SYM) {
+		return AddressMode::A_MEMDIR;
+	}
+	if (type == AddressType::PCREL_SYM ||
+		type == AddressType::REGINDPOM ||
+		type == AddressType::REGINDPOM_SYM) {
+		if (operandLength == 1) {
+			return AddressMode::A_REGINDPOM_B;
+		}
+		return AddressMode::A_REGINDPOM_W;
+	}
+	if (type == AddressType::REGIND) {
+		return AddressMode::A_REGIND;
+	}
+	if (type == AddressType::REGDIR) {
+		return AddressMode::A_REGDIR;
+	}
+	TwoPassAssembler::errors.push_back("Can't determine address mode!");
+	return AddressMode();
+}
+
+int Helpers::getInstructionLength(ParsedLine line, InstructionType type)
+{
+	int instructionLength = 1;
+	if (	// 0 operands
+		type == InstructionType::RET ||
+		type == InstructionType::IRET ||
+		type == InstructionType::HALT
+		) {
+		// Nothing -> instructionLength = 1
+	}
+	else if (	// 1 operand -> 1st is dst
+		type == InstructionType::INT ||
+		type == InstructionType::NOT ||
+		type == InstructionType::POP ||
+		type == InstructionType::JMP ||
+		type == InstructionType::JEQ ||
+		type == InstructionType::JNE ||
+		type == InstructionType::JGT ||
+		type == InstructionType::CALL ||
+		type == InstructionType::PUSH
+		) {
+		int operandLength = getOperandLength(line);
+		AddressMode addressMode = getAddressMode(line.at(1),operandLength);
+		if (addressMode == AddressMode::A_IMMED && type != InstructionType::PUSH) {
+			TwoPassAssembler::errors.push_back("Immed in dst operand!");
+		}
+		if (addressMode != AddressMode::A_REGDIR) {
+			instructionLength += operandLength; // Register declared in descriptor -> no additional bytes
+		}
+		instructionLength += 1; // Operand descriptor		
+	}
+	else {	// 2 operands
+		int operandLength = getOperandLength(line);
+		instructionLength += 2; // 2 operand descriptors
+		AddressMode addressMode = getAddressMode(line.at(1), operandLength); // First operand
+		if (addressMode != AddressMode::A_REGDIR) {
+			instructionLength += operandLength;
+		}
+		addressMode = getAddressMode(line.at(2), operandLength); // Second operand
+		if (addressMode != AddressMode::A_REGDIR) {
+			instructionLength += operandLength;
+		}
+	}
+
+	return instructionLength;
+}
+
 int Helpers::getOperandLength(ParsedLine line)
 {
 	string instruction = line.at(0);
@@ -96,6 +173,7 @@ int Helpers::getOperandLength(ParsedLine line)
 	if (lastChar == 'b') {
 		operandLength = 1;
 	}
+
 	return operandLength;
 }
 
