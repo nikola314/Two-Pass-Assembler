@@ -16,5 +16,10 @@ public:
 	static int getInstructionLength(ParsedLine line, InstructionType type);
 	static int getOperandLength(ParsedLine line);
 	static uint8_t getRegisterBits(std::string regString, int offset);
+	static bool isSymbol(std::string);
+	static std::string getRegindpomOffset(std::string operand);
+	static std::string getImmedOperand(std::string operand);
+	static std::string getMemdirOperand(std::string operand);
+
 };
 

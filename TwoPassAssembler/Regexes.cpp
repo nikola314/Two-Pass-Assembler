@@ -60,6 +60,13 @@ regex Regexes::ABS("\\*\\d+");
 regex Regexes::ABS_SYM("[a-zA-Z_]+[a-zA-Z_0-9]*");
 regex Regexes::REGIND("\\[(r\\d(l|h)?|pc|sp)\\]");
 
+// Symbol
+regex Regexes::SYMBOL("[a-zA-Z_]+[a-zA-Z_0-9]*");
+
+// Extracting operands
+regex Regexes::REGINDPOM_OFFSET("(r\\d(l|h)?|pc|sp)\\[([a-zA-Z0-9_]+)\\]");
+regex Regexes::IMMED_OPERAND("(\\d.*|&[a-zA-Z_]+[a-zA-Z_0-9]*)");
+regex Regexes::MEMDIR_OPERAND("(\\$[a-zA-Z_]+[a-zA-Z_0-9]*|[a-zA-Z_]+[a-zA-Z_0-9]*|\\*\\d.*)");
 
 Regexes::Regexes()
 {

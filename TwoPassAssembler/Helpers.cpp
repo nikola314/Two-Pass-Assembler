@@ -96,12 +96,12 @@ AddressMode Helpers::getAddressMode(std::string address, int operandLength)
 		type == AddressType::IMMED_SYM) {
 		return AddressMode::A_IMMED;
 	}
-	if (type == AddressType::ABS ||
+	if (type == AddressType::PCREL_SYM || 
+		type == AddressType::ABS ||
 		type == AddressType::ABS_SYM) {
 		return AddressMode::A_MEMDIR;
 	}
-	if (type == AddressType::PCREL_SYM ||
-		type == AddressType::REGINDPOM ||
+	if (type == AddressType::REGINDPOM ||
 		type == AddressType::REGINDPOM_SYM) {
 		if (operandLength == 1) {
 			return AddressMode::A_REGINDPOM_B;
@@ -193,5 +193,58 @@ uint8_t Helpers::getRegisterBits(std::string regString, int offset)
 	}
 
 	return regNum;
+}
+
+bool Helpers::isSymbol(std::string value)
+{
+	if (regex_match(value, Regexes::SYMBOL)) {
+		return true;
+	}
+	return false;
+}
+
+string Helpers::getRegindpomOffset(std::string operand)
+{
+	smatch matches;
+	if (regex_search(operand, matches, Regexes::REGINDPOM_OFFSET)) {
+		return matches[1].str();
+	}
+	else {
+		TwoPassAssembler::errors.push_back("Wrong addressing: " + operand);
+	}
+
+	return string();
+}
+
+std::string Helpers::getImmedOperand(std::string operand)
+{
+	smatch matches;
+	if (regex_search(operand, matches, Regexes::IMMED_OPERAND)) {
+		string match = matches[1].str();
+		if (match.at(0) == '&') {
+			return match.substr(1, match.length());
+		}
+		return match;
+	}
+	else {
+		TwoPassAssembler::errors.push_back("Wrong addressing: " + operand);
+	}
+	return std::string();
+}
+
+std::string Helpers::getMemdirOperand(std::string operand)
+{
+	smatch matches;
+	if (regex_search(operand, matches, Regexes::MEMDIR_OPERAND)) {
+		string match = matches[1].str();
+		if (match.at(0) == '$' || match.at(0)=='*') {
+			return match.substr(1, match.length());
+		}
+		return match;
+	}
+	else {
+		TwoPassAssembler::errors.push_back("Wrong addressing: " + operand);
+	}
+	return std::string();
 }
 

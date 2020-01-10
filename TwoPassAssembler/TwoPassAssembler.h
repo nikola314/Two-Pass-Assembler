@@ -31,6 +31,7 @@ private:
 	void secondPass(ParsedLine line, WordType type);
 	void secondPassDirective(ParsedLine line, DirectiveType type);
 	void secondPassInstruction(ParsedLine line, InstructionType type);
+	void secondPassInstructionOperand(ParsedLine line, int operand);
 
 	Section* getSection(string name, string flags = "");
 	bool sectionExists(string name);
@@ -41,5 +42,7 @@ public:
 	void printSymbolTable();
 	void printErrors();
 	void printSections();
+	void printSectionData();
+	void printRelocationTables();
 };
 

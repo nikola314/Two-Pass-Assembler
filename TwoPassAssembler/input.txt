@@ -1,11 +1,11 @@
 .global abc, ext, blabla
 .data
-lab:   .word 5,6,3
+lab:   .word 5,ext,3
 lab2: .byte 3
 
 lalica:
 .align 4
-vojica:
+vica:
   .byte 7
 bla:
   .word 10, 5, abc, 21
@@ -22,10 +22,10 @@ add r3, r4
 iret
 	.section .nikola "a"
 .word 5, 6
-jgt lab2
+jgt $lab2
 jne $bla
 lebnik:
-div r4, &53+2-64+12
+div r4, 125
 or r3[ext], r2
 
 call blabla

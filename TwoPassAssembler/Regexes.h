@@ -59,6 +59,10 @@ public:
 	static std::regex ABS_SYM;
 	static std::regex REGIND;
 
-
+	static std::regex SYMBOL;
+	
+	static std::regex REGINDPOM_OFFSET;
+	static std::regex IMMED_OPERAND;
+	static std::regex MEMDIR_OPERAND;
 };
 
