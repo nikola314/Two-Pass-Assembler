@@ -118,6 +118,7 @@
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Regexes.cpp" />
+    <ClCompile Include="RelocationEntry.cpp" />
     <ClCompile Include="Section.cpp" />
     <ClCompile Include="Symbol.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="definitions.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="Regexes.h" />
+    <ClInclude Include="RelocationEntry.h" />
     <ClInclude Include="Section.h" />
     <ClInclude Include="Symbol.h" />
     <ClInclude Include="SymbolTable.h" />

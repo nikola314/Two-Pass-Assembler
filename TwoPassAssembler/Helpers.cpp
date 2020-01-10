@@ -177,3 +177,21 @@ int Helpers::getOperandLength(ParsedLine line)
 	return operandLength;
 }
 
+uint8_t Helpers::getRegisterBits(std::string regString, int offset)
+{
+	if (regString.rfind("sp", offset) == offset) {
+		return SP << 1;
+	}
+	if (regString.rfind("pc", offset) == offset) {
+		return PC << 1;
+	}
+	char regNumChar = regString.at(offset+1);
+	int regNum = regNumChar - '0';
+	regNum = regNum << 1;
+	if (regString.length() > offset+2 && regString.at(offset+2) == 'h') {
+		regNum |= 1;
+	}
+
+	return regNum;
+}
+

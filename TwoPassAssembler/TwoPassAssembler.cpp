@@ -143,6 +143,14 @@ void TwoPassAssembler::secondPass()
 	for (ParsedLine line : inputFile) {
 		string word = line.at(0);
 		if (word == ".end") break;
+
+		// replacing .equ defines (only those standing alone line vector
+		for (int i = 1; i < line.size(); i++) {
+			if (equMap.find(line.at(i))!=equMap.end()) {
+				line.at(i) = equMap[line.at(i)];
+			}
+		}
+
 		WordType type = Helpers::getType(word);
 		secondPass(line, type);
 	}
@@ -178,24 +186,120 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 		currentSection = getSection(sectionName);
 	}
 	if (type == DirectiveType::GLOBAL) {
-		// set scope to global
+		for (int i = 1; i < line.size(); i++) {
+			Symbol* symbol = symbolTable.getSymbol(line.at(i));
+			if (symbol != nullptr) {
+				symbol->scope = SCOPE_GLOBAL;
+			}
+		}
 	}
+	// TODO: relocation table
 	if (type == DirectiveType::BYTE) {
-		// generate data
+		currentSection->counter += line.size() - 1;
+		for (int i = 1; i < line.size(); i++) {
+			int value = stoi(line.at(i));
+			if (value > CHAR_MAX || value < CHAR_MIN) {
+				errors.push_back("Unsupported value for .byte directive: "+value);
+			}
+			char data = (char) value;
+			currentSection->data.push_back(data);
+		}
 	}
+	// TODO: relocation table
 	if (type == DirectiveType::WORD) {
-		// generate data
+		currentSection->counter += CPU_WORD * (line.size() - 1);
+		for (int i = 1; i < line.size(); i++) {
+			int value = stoi(line.at(i));
+			if (value > SHRT_MAX || value < SHRT_MIN) {
+				errors.push_back("Unsupported value for .word directive: " + value);
+			}
+			short data = (short)value;
+			char first = 0 | (data >> 8);
+			char second = 0 | data;
+			currentSection->data.push_back(first);
+			currentSection->data.push_back(second);
+		}
 	}
 	if (type == DirectiveType::SKIP) {
-		// generate data
+		int skip = stoi(line.at(1));
+		currentSection->counter += skip;
+		for (int i = 0; i < skip; i++) currentSection->data.push_back(0);
 	}
-	if (type == DirectiveType::ALIGN) {
-		// generate data
+	if (type == DirectiveType::ALIGN) {	
+		int bytesToFill = stoi(line.at(1)) - (currentSection->counter % stoi(line.at(1)));
+		currentSection->counter += bytesToFill;
+		for (int i = 0; i < bytesToFill; i++) currentSection->data.push_back(0);
 	}
 }
 
-void TwoPassAssembler::secondPassInstruction(ParsedLine, InstructionType)
+void TwoPassAssembler::secondPassInstruction(ParsedLine line, InstructionType type)
 {
+	uint8_t instrDescr = type << 3;
+	if (line.at(0).at(line.at(0).length() - 1) != 'b') {
+		instrDescr |= 4;
+	}
+	currentSection->data.push_back(instrDescr);
+	currentSection->counter++;
+
+	if (type == InstructionType::IRET ||
+		type == InstructionType::RET ||
+		type == InstructionType::HALT) {
+		// Nothing -> just instruction descriptor, no operands
+	}
+	else if (
+		type == InstructionType::INT ||
+		type == InstructionType::NOT ||
+		type == InstructionType::POP ||
+		type == InstructionType::JMP ||
+		type == InstructionType::JEQ ||
+		type == InstructionType::JNE ||
+		type == InstructionType::JGT ||
+		type == InstructionType::CALL ||
+		type == InstructionType::PUSH
+		) {
+		int operandLength = Helpers::getOperandLength(line);
+		AddressMode addressMode = Helpers::getAddressMode(line.at(1), operandLength);
+		// Generate operand 1 descriptor and if needed operand 1
+		uint8_t op1Desc = addressMode << 5;
+		
+		if (addressMode == AddressMode::A_REGDIR) {
+			// r<val>
+			op1Desc |= Helpers::getRegisterBits(line.at(1), 0);
+			currentSection->data.push_back(op1Desc);
+		}
+		else if (addressMode == AddressMode::A_REGIND) {
+			// [r<val>]
+			op1Desc |= Helpers::getRegisterBits(line.at(1), 1);
+			currentSection->data.push_back(op1Desc);
+		}
+		else if (addressMode == AddressMode::A_REGINDPOM_B) {
+			op1Desc |= Helpers::getRegisterBits(line.at(1), 0);
+			currentSection->data.push_back(op1Desc);
+			// r<num>[<val>], r<num>[<symbol_name>]
+			// Get offset and push
+		}
+		else if (addressMode == AddressMode::A_REGINDPOM_W) {
+			op1Desc |= Helpers::getRegisterBits(line.at(1), 0);
+			currentSection->data.push_back(op1Desc);
+			// r<num>[<val>], r<num>[<symbol_name>]
+			// Get offset and push
+		}
+		else if (addressMode == AddressMode::A_IMMED) {
+			// <val> and &<symbol_name>
+		}
+		else if (addressMode == AddressMode::A_MEMDIR) {
+			// $<symbol_name>, <symbol_name>, *<val>
+		}	
+
+
+
+
+	}
+	else {
+		// 2 operands
+	}
+
+
 }
 
 void TwoPassAssembler::writeToOutputFile(std::string filePath)

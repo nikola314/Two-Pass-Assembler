@@ -15,5 +15,6 @@ public:
 	static AddressMode getAddressMode(std::string address, int operandLength);
 	static int getInstructionLength(ParsedLine line, InstructionType type);
 	static int getOperandLength(ParsedLine line);
+	static uint8_t getRegisterBits(std::string regString, int offset);
 };
 
