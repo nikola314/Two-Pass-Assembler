@@ -1,7 +1,7 @@
 #ifndef __DEFINITIONS__H
 #define __DEFINITIONS__H 1
 #include <vector>
-#include <string.h>
+#include <string>
 
 #define EXCEPTION_INVALID_ARGUMENTS 1
 #define EXCEPTION_WRONG_INPUT_FILE 2

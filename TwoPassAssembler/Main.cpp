@@ -41,11 +41,11 @@ ParsedFile parseInputFile(string filePath) {
 	while (getline(inFile, line)) {
 		if (!line.compare("\n") || !line.compare("") || line.at(0) == '@') continue;
 		// Cut off the comment
-		strcpy_s(lineptr, line.c_str());
-		char *cleanLine = strtok_s(lineptr, "@", &nextToken);
+		strcpy(lineptr, line.c_str());
+		char *cleanLine = strtok(lineptr, "@");
 		nextToken = NULL;
 		// Split by [',',' ','\t','\r']
-		char* token = strtok_s(cleanLine, ", \t\r", &nextToken);
+		char* token = strtok(cleanLine, ", \t\r");
 		if (token == nullptr) continue;
 		ParsedLine tokens;
 		while (token && strcmp(token, ".end")) {
@@ -59,7 +59,7 @@ ParsedFile parseInputFile(string filePath) {
 			else {
 				tokens.push_back(token);
 			}
-			token = strtok_s(nullptr, ", \t\r", &nextToken);
+			token = strtok(nullptr, ", \t\r");
 		}
 		if (token != NULL) {
 			if (strcmp(token, ".end") == 0) break;

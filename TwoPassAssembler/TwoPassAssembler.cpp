@@ -2,8 +2,11 @@
 #include "definitions.h"
 #include "Helpers.h"
 #include <iostream>
-#include<fstream>
-#include<ostream>
+#include <climits>
+#include <vector>
+#include <fstream>
+#include <ostream>
+#include <string>
 
 using namespace std;
 
