@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __HELPERS__H
+#define __HELPERS__H 1
 #include <string>
 #include <regex>
 #include "definitions.h"
@@ -20,6 +21,9 @@ public:
 	static std::string getRegindpomOffset(std::string operand);
 	static std::string getImmedOperand(std::string operand);
 	static std::string getMemdirOperand(std::string operand);
+	static std::string getHexStringFromByte(char byte);
+	static std::string getHexChar(char);
 
 };
 
+#endif

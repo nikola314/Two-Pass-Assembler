@@ -1,5 +1,5 @@
-#ifndef __EXCEPTIONS__H
-#define __EXCEPTIONS__H 1
+#ifndef __DEFINITIONS__H
+#define __DEFINITIONS__H 1
 #include <vector>
 #include <string.h>
 

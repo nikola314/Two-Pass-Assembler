@@ -1,0 +1,59 @@
+
+
+SYMBOL TABLE:
+LABEL		SECTION		OFFSET		SCOPE		ID
+.data		.data		0		0		0
+lab		.data		0		0		1
+lab2		.data		6		0		2
+lalica		.data		7		0		3
+vica		.data		8		0		4
+bla		.data		9		0		5
+joj		.data		17		0		6
+.text		.text		0		0		7
+.nikola		.nikola		0		0		8
+lebnik		.nikola		12		0		9
+ext		?		-1		1		10
+abc		?		-1		1		11
+pro		?		-1		1		12
+r3		?		-1		1		13
+blabla		?		-1		1		14
+
+
+SECTIONS:
+NAME		FLAGS		COUNTER
+.data				47
+.text				12
+.nikola		a		52
+
+
+SECTION: .data
+05 00 00 00 03 00 03 00 00 f9 0a 00 05 00 00 00 
+15 00 05 24 22 a0 00 00 
+
+SECTION: .text
+94 2a 2c 26 28 cc 
+
+SECTION: .nikola
+05 00 06 00 b4 f8 00 00 ac e4 00 00 44 28 00 7d 
+00 64 86 00 00 24 bc a0 00 00 
+
+Relocation table - .data
+OFFSET	TYPE	SYM.ID.
+25	1	10
+37	1	11
+45	1	12
+
+
+Relocation table - .text
+OFFSET	TYPE	SYM.ID.
+
+
+Relocation table - .nikola
+OFFSET	TYPE	SYM.ID.
+32	1	2
+36	1	5
+45	1	13
+50	1	14
+
+
+ERRORS:

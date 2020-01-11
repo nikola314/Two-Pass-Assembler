@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __ASSEMBLER__H
+#define __ASSEMBLER__H 1
 #include "definitions.h"
 #include "Section.h"
 #include "SymbolTable.h"
@@ -17,7 +18,7 @@ private:
 
 	ParsedFile inputFile;
 	std::vector<Section*> sections;	
-	std::map<string, unsigned int> equMap;
+	std::map<string, int> equMap;
 	Section* currentSection = nullptr;
 	SymbolTable symbolTable;
 	
@@ -35,14 +36,16 @@ private:
 
 	Section* getSection(string name, string flags = "");
 	bool sectionExists(string name);
-	void writeToOutputFile(std::string filePath);
+	void printSymbolTable(std::ostream&);
+	void printErrors(std::ostream&);
+	void printSections(std::ostream&);
+	void printSectionData(std::ostream&);
+	void printRelocationTables(std::ostream&);
 
 	/*	TESTING	*/
 public:
-	void printSymbolTable();
-	void printErrors();
-	void printSections();
-	void printSectionData();
-	void printRelocationTables();
+
+	void printToStream(std::ostream&);
 };
 
+#endif

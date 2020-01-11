@@ -170,7 +170,7 @@ int Helpers::getOperandLength(ParsedLine line)
 	string instruction = line.at(0);
 	int operandLength = 2;
 	char lastChar = instruction.at(instruction.length() - 1);
-	if (lastChar == 'b') {
+	if (lastChar == 'b' && instruction.length()>3) {
 		operandLength = 1;
 	}
 
@@ -207,7 +207,8 @@ string Helpers::getRegindpomOffset(std::string operand)
 {
 	smatch matches;
 	if (regex_search(operand, matches, Regexes::REGINDPOM_OFFSET)) {
-		return matches[1].str();
+
+		return matches[3].str();
 	}
 	else {
 		TwoPassAssembler::errors.push_back("Wrong addressing: " + operand);
@@ -247,4 +248,32 @@ std::string Helpers::getMemdirOperand(std::string operand)
 	}
 	return std::string();
 }
+
+std::string Helpers::getHexStringFromByte(char byte)
+{
+	char firstVal = (byte >> 4) & 15;
+	char secondVal = byte & 15;
+	string retval = "";
+	retval.append(getHexChar(firstVal));
+	retval.append(getHexChar(secondVal));
+	return retval;
+}
+
+string Helpers::getHexChar(char value) {
+	string retval = "x";
+	if (value < 10) {
+		retval.at(0) = '0' + value;
+		return retval;
+	}
+	switch (value) {
+		case 10: retval.at(0) = 'a'; break;
+		case 11: retval.at(0) = 'b'; break;
+		case 12: retval.at(0) = 'c'; break;
+		case 13: retval.at(0) = 'd'; break;
+		case 14: retval.at(0) = 'e'; break;
+		case 15: retval.at(0) = 'f'; break;
+	}
+	return retval;
+}
+
 

@@ -50,7 +50,7 @@ regex Regexes::RET("ret");
 regex Regexes::IRET("iret?");
 
 // Address modes
-regex Regexes::IMMED("-?\\d+");
+regex Regexes::IMMED("-?\\d.*");
 regex Regexes::REGDIR("(r\\d(l|h)?|pc|sp)");
 regex Regexes::REGINDPOM("(r\\d(l|h)?|pc|sp)\\[-?\\d+\\]");
 regex Regexes::REGINDPOM_SYM("(r\\d(l|h)?|pc|sp)\\[-?[a-zA-Z_]+[a-zA-Z_0-9]*\\]");
@@ -64,9 +64,9 @@ regex Regexes::REGIND("\\[(r\\d(l|h)?|pc|sp)\\]");
 regex Regexes::SYMBOL("[a-zA-Z_]+[a-zA-Z_0-9]*");
 
 // Extracting operands
-regex Regexes::REGINDPOM_OFFSET("(r\\d(l|h)?|pc|sp)\\[([a-zA-Z0-9_]+)\\]");
-regex Regexes::IMMED_OPERAND("(\\d.*|&[a-zA-Z_]+[a-zA-Z_0-9]*)");
-regex Regexes::MEMDIR_OPERAND("(\\$[a-zA-Z_]+[a-zA-Z_0-9]*|[a-zA-Z_]+[a-zA-Z_0-9]*|\\*\\d.*)");
+regex Regexes::REGINDPOM_OFFSET("(r\\d(l|h)?|pc|sp)\\[(-?\\d+|[a-zA-Z0-9_]+)\\]");
+regex Regexes::IMMED_OPERAND("(-?\\d.*|&[a-zA-Z_]+[a-zA-Z_0-9]*)");
+regex Regexes::MEMDIR_OPERAND("(\\$[a-zA-Z_]+[a-zA-Z_0-9]*|[a-zA-Z_]+[a-zA-Z_0-9]*|\\*-?\\d.*)");
 
 Regexes::Regexes()
 {

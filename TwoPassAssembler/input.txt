@@ -4,9 +4,9 @@ lab:   .word 5,ext,3
 lab2: .byte 3
 
 lalica:
-.align 4
+.align          4
 vica:
-  .byte 7
+  .byte -7
 bla:
   .word 10, 5, abc, 21
 joj:
@@ -16,6 +16,7 @@ joj:
 
 mov r1, pro
       
+
 .text
 pop r5
 add r3, r4

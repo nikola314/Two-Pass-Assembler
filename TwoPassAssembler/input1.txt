@@ -1,0 +1,27 @@
+
+.text
+add r1, *0x77
+movw sp[0], 0x1234
+jgt a
+
+.data
+a: .word 0x0123, 5, 10, 15
+.byte 8, 9
+d:
+c:
+.word 15
+b:
+.byte 20
+.align 8
+.skip 16
+
+.section .mysect, "abc"
+xorb r1[10], &b
+sub r3, r4[c]
+.equ ee, 15
+shl r2, 0x2
+shr pc[ee], 2
+jne $d
+call getchar
+ret
+iret

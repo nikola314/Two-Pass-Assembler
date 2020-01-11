@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SECTION__H
+#define __SECTION__H 1
 #include <vector>
 #include <string>
 #include "RelocationEntry.h"
@@ -17,3 +18,4 @@ public:
 	~Section();
 };
 
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __REGEXES__H
+#define __REGEXES__H 1
 #include <regex>
 class Regexes
 {
@@ -66,3 +67,4 @@ public:
 	static std::regex MEMDIR_OPERAND;
 };
 
+#endif

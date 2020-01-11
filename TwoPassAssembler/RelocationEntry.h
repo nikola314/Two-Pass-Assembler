@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RELOCATION_ENTRY__H
+#define __RELOCATION_ENTRY__H 1
 #include "definitions.h"
 class RelocationEntry
 {
@@ -12,3 +13,4 @@ public:
 	~RelocationEntry();
 };
 
+#endif

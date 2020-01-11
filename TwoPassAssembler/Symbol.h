@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SYMBOL__H
+#define __SYMBOL__H 1
 #include<string>
 #include"definitions.h"
 
@@ -16,3 +17,4 @@ public:
 
 };
 
+#endif

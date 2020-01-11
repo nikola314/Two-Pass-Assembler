@@ -4,6 +4,8 @@
 #include "definitions.h" 
 #include <fstream>
 #include <string.h>
+#include <iostream>
+#include <ostream>
 #include "TwoPassAssembler.h"
 #include "Symbol.h"
 
@@ -105,10 +107,9 @@ int main(int argc, char** argv)
 		assembler.generateAssembly(outputFileName);
 
 		// Test
-		assembler.printSymbolTable();
-		assembler.printSections();
-		assembler.printErrors();
+		assembler.printToStream(cout);
 		getchar();
+
 	}
 	catch (int exceptionCode) {
 		// TODO: print the exception

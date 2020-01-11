@@ -2,6 +2,8 @@
 #include "definitions.h"
 #include "Helpers.h"
 #include <iostream>
+#include<fstream>
+#include<ostream>
 
 using namespace std;
 
@@ -16,7 +18,8 @@ void TwoPassAssembler::generateAssembly(string outputFilePath)
 {
 	firstPass();
 	secondPass();
-	writeToOutputFile(outputFilePath);
+	std::ofstream file_out(outputFilePath);
+	printToStream(file_out);
 }
 
 
@@ -184,6 +187,7 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 		}
 		string sectionName = line.at(index);
 		currentSection = getSection(sectionName);
+		currentSection->counter = 0;
 	}
 	if (type == DirectiveType::GLOBAL) {
 		for (int i = 1; i < line.size(); i++) {
@@ -238,9 +242,10 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 			short data = (short)value;
 			char first = 0 | (data >> 8);
 			char second = 0 | data;
-			currentSection->data.push_back(first);
+
 			currentSection->data.push_back(second);
-				
+			currentSection->data.push_back(first);
+							
 			currentSection->counter += CPU_WORD;
 		}
 	}
@@ -318,6 +323,9 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 		// r<num>[<val>], r<num>[<symbol_name>]
 		// Get offset and push
 		string offset = Helpers::getRegindpomOffset(line.at(operand));
+		if (equMap.find(offset) != equMap.end()) {
+			offset = to_string(equMap[offset]);
+		}
 		if (Helpers::isSymbol(offset)) {
 			Symbol* symbol = symbolTable.getSymbol(offset);
 			if (symbol == nullptr) {
@@ -344,6 +352,9 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 		// r<num>[<val>], r<num>[<symbol_name>]
 		// Get offset and push
 		string offset = Helpers::getRegindpomOffset(line.at(operand));
+		if (equMap.find(offset) != equMap.end()) {
+			offset = to_string(equMap[offset]);
+		}
 		if (Helpers::isSymbol(offset)) {
 			// TODO: insert into symbolTable if not exists
 			Symbol* symbol = symbolTable.getSymbol(offset);
@@ -364,8 +375,8 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 			short data = (short)value;
 			char first = 0 | (data >> 8);
 			char second = 0 | data;
-			currentSection->data.push_back(first);
 			currentSection->data.push_back(second);
+			currentSection->data.push_back(first);
 		}
 		currentSection->counter += CPU_WORD; // first operand over
 	}
@@ -403,8 +414,8 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 				short data = (short)value;
 				char first = 0 | (data >> 8);
 				char second = 0 | data;
-				currentSection->data.push_back(first);
 				currentSection->data.push_back(second);
+				currentSection->data.push_back(first);
 			}
 		}
 		currentSection->counter += operandLength;
@@ -446,49 +457,73 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 				short data = (short)value;
 				char first = 0 | (data >> 8);
 				char second = 0 | data;
-				currentSection->data.push_back(first);
 				currentSection->data.push_back(second);
+				currentSection->data.push_back(first);				
 			}
 		}
 		currentSection->counter += operandLength;
 	}
 }
 
-void TwoPassAssembler::writeToOutputFile(std::string filePath)
+void TwoPassAssembler::printSymbolTable(std::ostream& stream)
 {
-}
-
-void TwoPassAssembler::printSymbolTable()
-{
-	cout << endl << endl << "SYMBOL TABLE:" << endl
+	stream << endl << endl << "SYMBOL TABLE:" << endl
 		<< "LABEL\t\t" << "SECTION\t\t" << "OFFSET\t\t" << "SCOPE\t\t" << "ID" << endl;
 	for (auto entry : symbolTable.table) {
-		cout << entry->name << "\t\t" << entry->section << "\t\t" 
+		stream << entry->name << "\t\t" << entry->section << "\t\t" 
 			<< entry->offset << "\t\t" << entry->scope << "\t\t" << entry->entryId << endl;
 	}
 }
 
-void TwoPassAssembler::printErrors()
+void TwoPassAssembler::printErrors(std::ostream& stream)
 {
-	cout << endl << endl << "ERRORS:" << endl;
+	stream << endl << endl << "ERRORS:" << endl;
 	for (auto error : errors) {
-		cout << error << endl;
+		stream << error << endl;
 	}
 }
 
-void TwoPassAssembler::printSections()
+void TwoPassAssembler::printSections(std::ostream& stream)
 {
-	cout << endl << endl << "SECTIONS:" << endl
+	stream << endl << endl << "SECTIONS:" << endl
 		<< "NAME\t\t" << "FLAGS\t\t" << "COUNTER" << endl;
 	for (auto section : sections) {
-		cout << section->name << "\t\t" << section->flags << "\t\t" << section->counter << endl;
+		stream << section->name << "\t\t" << section->flags << "\t\t" << section->counter << endl;
 	}
 }
 
-void TwoPassAssembler::printSectionData()
+void TwoPassAssembler::printSectionData(std::ostream& stream)
 {
+	for (auto section : sections) {
+		stream << endl << endl << "SECTION: " << section->name << endl;
+		int cnt = 0;
+		for (auto byte : section->data) {
+			stream << Helpers::getHexStringFromByte(byte) << " ";
+			cnt++;
+			if (cnt % 16 == 0) {
+				stream << endl;
+			}
+		}
+	}
+	
 }
 
-void TwoPassAssembler::printRelocationTables()
+void TwoPassAssembler::printRelocationTables(std::ostream& stream)
 {
+	for (auto section : sections) {
+		stream << endl << endl << "Relocation table - " + section->name << endl;
+		stream << "OFFSET\tTYPE\tSYM.ID." << endl;
+		for (auto entry : section->relocationTable) {
+			stream << entry->offset << "\t" << entry->type << "\t" << entry->symbolId << endl;
+		}
+	}
+}
+
+void TwoPassAssembler::printToStream(std::ostream & stream)
+{
+	printSymbolTable(stream);
+	printSections(stream);
+	printSectionData(stream);
+	printRelocationTables(stream);
+	printErrors(stream);
 }

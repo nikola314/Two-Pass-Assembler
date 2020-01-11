@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SYMBOL_TABLE__H
+#define __SYMBOL_TABLE__H 1
 #include<vector>
 #include "definitions.h"
 #include "Symbol.h"
@@ -20,3 +21,5 @@ public:
 	/*	TESTING	*/
 	friend class TwoPassAssembler;
 };
+
+#endif
