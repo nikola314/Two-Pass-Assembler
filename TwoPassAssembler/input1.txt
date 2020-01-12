@@ -3,7 +3,7 @@
 add r1, *0x77
 movw sp[0], 0x1234
 jgt a
-
+.global a, c
 .data
 a: .word 0x0123, 5, 10, 15
 .byte 8, 9

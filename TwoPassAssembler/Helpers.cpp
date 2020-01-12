@@ -99,8 +99,7 @@ AddressMode Helpers::getAddressMode(std::string address, int operandLength)
 		type == AddressType::IMMED_SYM) {
 		return AddressMode::A_IMMED;
 	}
-	if (type == AddressType::PCREL_SYM || 
-		type == AddressType::ABS ||
+	if (type == AddressType::ABS ||
 		type == AddressType::ABS_SYM) {
 		return AddressMode::A_MEMDIR;
 	}
@@ -109,6 +108,9 @@ AddressMode Helpers::getAddressMode(std::string address, int operandLength)
 		if (operandLength == 1) {
 			return AddressMode::A_REGINDPOM_B;
 		}
+		return AddressMode::A_REGINDPOM_W;
+	}
+	if (type == AddressType::PCREL_SYM) {
 		return AddressMode::A_REGINDPOM_W;
 	}
 	if (type == AddressType::REGIND) {
@@ -185,9 +187,10 @@ uint8_t Helpers::getRegisterBits(std::string regString, int offset)
 	if (regString.rfind("sp", offset) == offset) {
 		return SP << 1;
 	}
-	if (regString.rfind("pc", offset) == offset) {
+	if ((regString.rfind("pc", offset) == offset) || regString.at(0)=='$')  {
 		return PC << 1;
 	}
+
 	char regNumChar = regString.at(offset+1);
 	int regNum = regNumChar - '0';
 	regNum = regNum << 1;

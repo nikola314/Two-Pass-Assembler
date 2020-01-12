@@ -314,7 +314,7 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 	int operandLength = Helpers::getOperandLength(line);
 	AddressMode addressMode = Helpers::getAddressMode(line.at(operand), operandLength);
 	// Generate operand descriptor and if needed operand 1
-	uint8_t opDesc = addressMode << 5;
+	uint8_t opDesc = ((int)addressMode) << 5;
 
 	currentSection->counter++; // for operator descriptor
 
@@ -362,9 +362,16 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 	else if (addressMode == AddressMode::A_REGINDPOM_W) {
 		opDesc |= Helpers::getRegisterBits(line.at(operand), 0);
 		currentSection->data.push_back(opDesc);
-		// r<num>[<val>], r<num>[<symbol_name>]
+		// r<num>[<val>], r<num>[<symbol_name>], $<symbol_name>
 		// Get offset and push
-		string offset = Helpers::getRegindpomOffset(line.at(operand));
+		string offset;
+		AddressType at = Helpers::getAddressType(line.at(operand));
+		if (at == AddressType::PCREL_SYM) {
+			offset = Helpers::getMemdirOperand(line.at(operand));
+		}
+		else {
+			offset = Helpers::getRegindpomOffset(line.at(operand));
+		}
 		if (equMap.find(offset) != equMap.end()) {
 			offset = to_string(equMap[offset]);
 		}
@@ -433,10 +440,10 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 		currentSection->counter += operandLength;
 	}
 	else if (addressMode == AddressMode::A_MEMDIR) {
-		// $<symbol_name>, <symbol_name>, *<val>
-		if (Helpers::getAddressType(line.at(operand))== AddressType::PCREL_SYM) {
+		// <symbol_name>, *<val>
+	/*	if (Helpers::getAddressType(line.at(operand))== AddressType::PCREL_SYM) {
 			opDesc|= Helpers::getRegisterBits(line.at(operand), 0);
-		}
+		}*/
 		currentSection->data.push_back(opDesc);
 		string oprnd = Helpers::getMemdirOperand(line.at(operand));
 		if (Helpers::isSymbol(oprnd)) {
@@ -520,7 +527,6 @@ void TwoPassAssembler::printSectionData(std::ostream& stream)
 			}
 		}
 	}
-	
 }
 
 void TwoPassAssembler::printRelocationTables(std::ostream& stream)

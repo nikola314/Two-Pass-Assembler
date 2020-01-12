@@ -2,9 +2,9 @@ SYMBOL TABLE:
 LABEL		SECTION		OFFSET		SCOPE		ID
 .text		.text		0		l		0
 .data		.data		0		l		1
-a		.data		0		l		2
+a		.data		0		g		2
 d		.data		10		l		3
-c		.data		10		l		4
+c		.data		10		g		4
 b		.data		12		l		5
 .mysect		.mysect		0		l		6
 getchar		?		?		g		7
@@ -28,7 +28,7 @@ SECTION: .data
 
 SECTION: .mysect
 68 62 f6 00 00 30 26 88 00 00 7c 24 00 02 00 84 
-8e 0f 00 00 02 00 ac e8 00 00 bc a0 00 00 c4 cc 
+8e 0f 00 00 02 00 ac 8e 00 00 bc a0 00 00 c4 cc 
 
 
 Relocation table - .text
