@@ -19,10 +19,21 @@ TwoPassAssembler::TwoPassAssembler(ParsedFile file)
 
 void TwoPassAssembler::generateAssembly(string outputFilePath)
 {
-	firstPass();
-	secondPass();
-	std::ofstream file_out(outputFilePath);
-	printToStream(file_out);
+	bool noError = true;
+	try {
+		firstPass();
+		secondPass();
+	}
+	catch (...) {
+		noError = true;
+	}
+	if (noError) {
+		std::ofstream file_out(outputFilePath);
+		printToStream(file_out);
+	}
+	else {
+		cout << "Error parsing file!";
+	}
 }
 
 
@@ -87,13 +98,13 @@ void TwoPassAssembler::firstPassDirective(ParsedLine line, DirectiveType type)
 		currentSection->counter += CPU_WORD * (line.size() - 1);
 	}
 	if (type == DirectiveType::SKIP) {
-		currentSection->counter += stoi(line.at(1));
+		currentSection->counter += Helpers::getValueFromNumberString(line.at(1));
 	}
 	if (type == DirectiveType::ALIGN) {
-		currentSection->counter += stoi(line.at(1)) - (currentSection->counter % stoi(line.at(1)));
+		currentSection->counter += Helpers::getValueFromNumberString(line.at(1)) - (currentSection->counter % Helpers::getValueFromNumberString(line.at(1)));
 	}
 	if (type == DirectiveType::EQU) {
-		equMap[line.at(1)] = stoi(line.at(2));
+		equMap[line.at(1)] = Helpers::getValueFromNumberString(line.at(2));
 	}
 }
 
@@ -145,7 +156,6 @@ bool TwoPassAssembler::sectionExists(string name) {
 void TwoPassAssembler::secondPass()
 {
 	currentSection = nullptr;
-	// TODO: Set location counters of sections to 0
 	for (ParsedLine line : inputFile) {
 		string word = line.at(0);
 		if (word == ".end") break;
@@ -213,7 +223,7 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 				currentSection->relocationTable.push_back(rel);
 			}
 			else {
-				value = stoi(line.at(i));
+				value = Helpers::getValueFromNumberString(line.at(i));
 			}		
 			if (value > CHAR_MAX || value < CHAR_MIN) {
 				errors.push_back("Unsupported value for .byte directive: " + value);
@@ -236,7 +246,7 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 				currentSection->relocationTable.push_back(rel);
 			}
 			else {
-				value = stoi(line.at(i));
+				value = Helpers::getValueFromNumberString(line.at(i));
 			}
 		
 			if (value > SHRT_MAX || value < SHRT_MIN) {
@@ -253,12 +263,12 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 		}
 	}
 	if (type == DirectiveType::SKIP) {
-		int skip = stoi(line.at(1));
+		int skip = Helpers::getValueFromNumberString(line.at(1));
 		currentSection->counter += skip;
 		for (int i = 0; i < skip; i++) currentSection->data.push_back(0);
 	}
 	if (type == DirectiveType::ALIGN) {	
-		int bytesToFill = stoi(line.at(1)) - (currentSection->counter % stoi(line.at(1)));
+		int bytesToFill = Helpers::getValueFromNumberString(line.at(1)) - (currentSection->counter % Helpers::getValueFromNumberString(line.at(1)));
 		currentSection->counter += bytesToFill;
 		for (int i = 0; i < bytesToFill; i++) currentSection->data.push_back(0);
 	}
@@ -340,7 +350,7 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 			currentSection->data.push_back(0);
 		}
 		else {
-			int value = stoi(offset);
+			int value = Helpers::getValueFromNumberString(offset);
 			if (value > CHAR_MAX || value < CHAR_MIN) {
 				errors.push_back("Unsupported operand for instruction: " + line.at(0));
 			}
@@ -359,7 +369,6 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 			offset = to_string(equMap[offset]);
 		}
 		if (Helpers::isSymbol(offset)) {
-			// TODO: insert into symbolTable if not exists
 			Symbol* symbol = symbolTable.getSymbol(offset);
 			if (symbol == nullptr) {
 				symbolTable.insertSymbol(offset, "?", Scope::SCOPE_GLOBAL, -1);
@@ -371,7 +380,7 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 			currentSection->data.push_back(0);
 		}
 		else {
-			int value = stoi(offset);
+			int value = Helpers::getValueFromNumberString(offset);
 			if (value > SHRT_MAX || value < SHRT_MIN) {
 				errors.push_back("Unsupported value for instruction: " + line.at(0));
 			}
@@ -402,7 +411,7 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 			}
 		}
 		else {
-			int value = stoi(oprnd);
+			int value = Helpers::getValueFromNumberString(oprnd);
 			if (operandLength == 1) {
 				if (value > CHAR_MAX || value < CHAR_MIN) {
 					errors.push_back("Unsupported value for instruction: " + line.at(0));
@@ -445,7 +454,7 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 			}
 		}
 		else {
-			int value = stoi(oprnd);
+			int value = Helpers::getValueFromNumberString(oprnd);
 			if (operandLength == 1) {
 				if (value > CHAR_MAX || value < CHAR_MIN) {
 					errors.push_back("Unsupported value for instruction: " + line.at(0));
@@ -470,16 +479,19 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 
 void TwoPassAssembler::printSymbolTable(std::ostream& stream)
 {
-	stream << endl << endl << "SYMBOL TABLE:" << endl
+	stream << "SYMBOL TABLE:" << endl
 		<< "LABEL\t\t" << "SECTION\t\t" << "OFFSET\t\t" << "SCOPE\t\t" << "ID" << endl;
 	for (auto entry : symbolTable.table) {
+		string offset = entry->offset != -1 ? to_string(entry->offset) : "?";
+		string scope = entry->scope == Scope::SCOPE_LOCAL ? "l" : "g";
 		stream << entry->name << "\t\t" << entry->section << "\t\t" 
-			<< entry->offset << "\t\t" << entry->scope << "\t\t" << entry->entryId << endl;
+			<< offset << "\t\t" << scope << "\t\t" << entry->entryId << endl;
 	}
 }
 
 void TwoPassAssembler::printErrors(std::ostream& stream)
 {
+	if (errors.size() == 0) return;
 	stream << endl << endl << "ERRORS:" << endl;
 	for (auto error : errors) {
 		stream << error << endl;
@@ -489,7 +501,7 @@ void TwoPassAssembler::printErrors(std::ostream& stream)
 void TwoPassAssembler::printSections(std::ostream& stream)
 {
 	stream << endl << endl << "SECTIONS:" << endl
-		<< "NAME\t\t" << "FLAGS\t\t" << "COUNTER" << endl;
+		<< "NAME\t\t" << "FLAGS\t\t" << "LOCATION COUNTER" << endl;
 	for (auto section : sections) {
 		stream << section->name << "\t\t" << section->flags << "\t\t" << section->counter << endl;
 	}
@@ -515,9 +527,10 @@ void TwoPassAssembler::printRelocationTables(std::ostream& stream)
 {
 	for (auto section : sections) {
 		stream << endl << endl << "Relocation table - " + section->name << endl;
-		stream << "OFFSET\tTYPE\tSYM.ID." << endl;
+		stream << "OFFSET\t\tTYPE\t\t\tSYM.ID." << endl;
 		for (auto entry : section->relocationTable) {
-			stream << entry->offset << "\t" << entry->type << "\t" << entry->symbolId << endl;
+			string type = entry->type == RelocationType::R_386_8 ? "R_386_8 " : "R_386_16";
+			stream << entry->offset << "\t\t" << type << "\t\t" << entry->symbolId << endl;
 		}
 	}
 }

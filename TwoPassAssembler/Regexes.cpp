@@ -56,7 +56,7 @@ regex Regexes::REGINDPOM("(r\\d(l|h)?|pc|sp)\\[-?\\d+\\]");
 regex Regexes::REGINDPOM_SYM("(r\\d(l|h)?|pc|sp)\\[-?[a-zA-Z_]+[a-zA-Z_0-9]*\\]");
 regex Regexes::IMMED_SYM("&[a-zA-Z_]+[a-zA-Z_0-9]*");
 regex Regexes::PCREL_SYM("\\$[a-zA-Z_]+[a-zA-Z_0-9]*");
-regex Regexes::ABS("\\*\\d+");
+regex Regexes::ABS("\\*\\d.*");
 regex Regexes::ABS_SYM("[a-zA-Z_]+[a-zA-Z_0-9]*");
 regex Regexes::REGIND("\\[(r\\d(l|h)?|pc|sp)\\]");
 

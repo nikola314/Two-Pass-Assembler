@@ -23,7 +23,7 @@ public:
 	static std::string getMemdirOperand(std::string operand);
 	static std::string getHexStringFromByte(char byte);
 	static std::string getHexChar(char);
-
+	static int getValueFromNumberString(std::string num);
 };
 
 #endif

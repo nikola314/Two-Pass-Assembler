@@ -49,9 +49,7 @@ ParsedFile parseInputFile(string filePath) {
 		if (token == nullptr) continue;
 		ParsedLine tokens;
 		while (token && strcmp(token, ".end")) {
-			// TODO: read the instruction and add it to file
 			if (token[strlen(token) - 1] == ':') {
-				// label
 				ParsedLine label;
 				label.push_back(token);
 				file.push_back(label);
@@ -73,7 +71,6 @@ ParsedFile parseInputFile(string filePath) {
 
 int main(int argc, char** argv)
 {
-
 	try {
 		if (argc < 3) {
 			printf("Invalid number of arguments!");
@@ -100,8 +97,8 @@ int main(int argc, char** argv)
 		ParsedFile inputFile = parseInputFile(inputFileName);
 
 		// Test
-		printParsedFile(inputFile);
-		getchar();
+		// printParsedFile(inputFile);
+		// getchar();
 
 		TwoPassAssembler assembler(inputFile);
 		assembler.generateAssembly(outputFileName);
@@ -112,7 +109,6 @@ int main(int argc, char** argv)
 
 	}
 	catch (int exceptionCode) {
-		// TODO: print the exception
 		return exceptionCode;
 	}
 	return 0;

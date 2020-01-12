@@ -16,10 +16,10 @@ b:
 .skip 16
 
 .section .mysect, "abc"
-xorb r1[10], &b
+xorb r1[-10], &b
 sub r3, r4[c]
 .equ ee, 15
-shl r2, 0x2
+shl r2, 0x2g3
 shr pc[ee], 2
 jne $d
 call getchar

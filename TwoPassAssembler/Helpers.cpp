@@ -1,6 +1,7 @@
 #include "Helpers.h"
 #include "Regexes.h"
 #include <regex>
+#include <string>
 #include "TwoPassAssembler.h"
 
 using namespace std;
@@ -20,6 +21,7 @@ WordType Helpers::getType(std::string value)
 	if (regex_match(value, Regexes::DIRECTIVE)) return DIRECTIVE;
 	if (regex_match(value, Regexes::INSTRUCTION)) return INSTRUCTION;
 
+	TwoPassAssembler::errors.push_back("Can't parse input file!");
 	return WordType();
 }
 
@@ -38,6 +40,7 @@ DirectiveType Helpers::getDirectiveType(std::string directive)
 	if (regex_match(directive, Regexes::EXTERN)) return EXTERN;
 	if (regex_match(directive, Regexes::EQU)) return EQU;
 
+	TwoPassAssembler::errors.push_back("Can't parse directive: "+directive);
 	return DirectiveType();
 }
 
@@ -69,7 +72,7 @@ InstructionType Helpers::getInstructionType(std::string instruction)
 	if (regex_match(instruction, Regexes::RET)) return RET;
 	if (regex_match(instruction, Regexes::IRET)) return IRET;
 
-
+	TwoPassAssembler::errors.push_back("Can't parse instruction: " + instruction);
 	return InstructionType();
 }
 
@@ -85,7 +88,7 @@ AddressType Helpers::getAddressType(std::string address)
 	if (regex_match(address, Regexes::ABS_SYM)) return ABS_SYM;
 	if (regex_match(address, Regexes::REGIND)) return REGIND;
 
-
+	TwoPassAssembler::errors.push_back("Can't parse addressing: " + address);
 	return AddressType();
 }
 
@@ -274,6 +277,21 @@ string Helpers::getHexChar(char value) {
 		case 15: retval.at(0) = 'f'; break;
 	}
 	return retval;
+}
+
+int Helpers::getValueFromNumberString(std::string num)
+{
+	int radix = 10;
+	if (num.length() > 1) {
+		// TODO: match with regex instead of this
+		if (num.at(1) == 'x') {
+			radix = 16;
+		}
+		else if (num.at(1) == 'b') {
+			radix = 2;
+		}
+	}
+	return stoi(num, 0, radix);
 }
 
 

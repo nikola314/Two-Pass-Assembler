@@ -11,6 +11,8 @@ public:
 	TwoPassAssembler(ParsedFile file);
 	~TwoPassAssembler();
 	void generateAssembly(std::string outputFilePath);
+	void printToStream(std::ostream&);
+
 	static std::vector<string> errors;
 
 private:
@@ -41,11 +43,6 @@ private:
 	void printSections(std::ostream&);
 	void printSectionData(std::ostream&);
 	void printRelocationTables(std::ostream&);
-
-	/*	TESTING	*/
-public:
-
-	void printToStream(std::ostream&);
 };
 
 #endif
