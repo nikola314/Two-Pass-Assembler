@@ -1,0 +1,23 @@
+SYMBOL TABLE:
+LABEL		SECTION		OFFSET		SCOPE		ID
+.text		.text		0		l		0
+main		.text		0		g		1
+newRoutine		.text		39		l		2
+currentTime		?		?		g		3
+
+
+SECTIONS:
+NAME		FLAGS		LOCATION COUNTER
+.text				59
+
+
+SECTION: .text
+24 a0 10 ff 00 07 00 24 a0 08 00 00 00 00 24 24 
+00 04 00 1c 24 24 24 00 02 00 1c 24 24 20 a0 00 
+00 24 20 00 0a 00 c4 8c 20 5c 3e 00 ff 7f 24 20 
+00 21 00 24 20 00 0a 00 94 20 cc 
+
+Relocation table - .text
+OFFSET		TYPE			SYM.ID.
+12		R_386_16		2
+31		R_386_16		3

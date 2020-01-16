@@ -1,0 +1,33 @@
+SYMBOL TABLE:
+LABEL		SECTION		OFFSET		SCOPE		ID
+sekcija		sekcija		0		l		0
+main		sekcija		0		g		1
+label		sekcija		15		l		2
+.data		.data		0		l		3
+address		.data		0		l		4
+
+
+SECTIONS:
+NAME		FLAGS		LOCATION COUNTER
+sekcija		REP		42
+.data				2
+
+
+SECTION: sekcija
+24 26 a0 00 00 24 24 00 00 00 24 22 00 0a ff 20 
+66 00 22 2c a0 00 00 00 01 00 24 26 a0 00 00 30 
+22 00 01 48 22 00 00 ac 24 c4 
+
+SECTION: .data
+f0 00 
+
+Relocation table - sekcija
+OFFSET		TYPE			SYM.ID.
+3		R_386_16		4
+8		R_386_16		2
+21		R_386_16		4
+29		R_386_16		4
+
+
+Relocation table - .data
+OFFSET		TYPE			SYM.ID.

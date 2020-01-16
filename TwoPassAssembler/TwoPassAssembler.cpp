@@ -162,8 +162,9 @@ void TwoPassAssembler::secondPass()
 
 		// replacing .equ defines (only those standing alone line vector
 		for (int i = 1; i < line.size(); i++) {
+			if (line.at(0) == ".equ") continue;
 			if (equMap.find(line.at(i))!=equMap.end()) {
-				line.at(i) = equMap[line.at(i)];
+				line.at(i) = to_string(equMap[line.at(i)]);				
 			}
 		}
 
@@ -225,7 +226,7 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 			else {
 				value = Helpers::getValueFromNumberString(line.at(i));
 			}		
-			if (value > CHAR_MAX || value < CHAR_MIN) {
+			if (value > UCHAR_MAX) {
 				errors.push_back("Unsupported value for .byte directive: " + value);
 			}
 			char data = (char)value;
@@ -249,7 +250,7 @@ void TwoPassAssembler::secondPassDirective(ParsedLine line, DirectiveType type)
 				value = Helpers::getValueFromNumberString(line.at(i));
 			}
 		
-			if (value > SHRT_MAX || value < SHRT_MIN) {
+			if (value > USHRT_MAX) {
 				errors.push_back("Unsupported value for .word directive: " + value);
 			}
 			short data = (short)value;
@@ -351,7 +352,7 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 		}
 		else {
 			int value = Helpers::getValueFromNumberString(offset);
-			if (value > CHAR_MAX || value < CHAR_MIN) {
+			if (value > UCHAR_MAX) {
 				errors.push_back("Unsupported operand for instruction: " + line.at(0));
 			}
 			char data = (char)value;
@@ -388,7 +389,7 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 		}
 		else {
 			int value = Helpers::getValueFromNumberString(offset);
-			if (value > SHRT_MAX || value < SHRT_MIN) {
+			if (value > USHRT_MAX) {
 				errors.push_back("Unsupported value for instruction: " + line.at(0));
 			}
 			short data = (short)value;
@@ -420,14 +421,14 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 		else {
 			int value = Helpers::getValueFromNumberString(oprnd);
 			if (operandLength == 1) {
-				if (value > CHAR_MAX || value < CHAR_MIN) {
+				if (value > UCHAR_MAX) {
 					errors.push_back("Unsupported value for instruction: " + line.at(0));
 				}
 				char data = (char)value;
 				currentSection->data.push_back(data);
 			}
 			else {
-				if (value > SHRT_MAX || value < SHRT_MIN) {
+				if (value > USHRT_MAX) {
 					errors.push_back("Unsupported value for instruction: " + line.at(0));
 				}
 				short data = (short)value;
@@ -463,14 +464,14 @@ void TwoPassAssembler::secondPassInstructionOperand(ParsedLine line, int operand
 		else {
 			int value = Helpers::getValueFromNumberString(oprnd);
 			if (operandLength == 1) {
-				if (value > CHAR_MAX || value < CHAR_MIN) {
+				if (value > UCHAR_MAX) {
 					errors.push_back("Unsupported value for instruction: " + line.at(0));
 				}
 				char data = (char)value;
 				currentSection->data.push_back(data);
 			}
 			else {
-				if (value > SHRT_MAX || value < SHRT_MIN) {
+				if (value > USHRT_MAX) {
 					errors.push_back("Unsupported value for instruction: " + line.at(0));
 				}
 				short data = (short)value;

@@ -190,6 +190,9 @@ uint8_t Helpers::getRegisterBits(std::string regString, int offset)
 	if ((regString.rfind("pc", offset) == offset) || regString.at(0)=='$')  {
 		return PC << 1;
 	}
+	if ((regString.rfind("psw", offset) == offset)) {
+		return PSW << 1;
+	}
 
 	char regNumChar = regString.at(offset+1);
 	int regNum = regNumChar - '0';

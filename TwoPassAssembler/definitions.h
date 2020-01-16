@@ -9,6 +9,7 @@
 #define CPU_WORD 2
 #define SP 6
 #define PC 7
+#define PSW 0xF
 
 typedef std::vector<std::string> ParsedLine;
 typedef std::vector<ParsedLine> ParsedFile;

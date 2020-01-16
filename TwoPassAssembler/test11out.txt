@@ -1,0 +1,43 @@
+SYMBOL TABLE:
+LABEL		SECTION		OFFSET		SCOPE		ID
+.text		.text		0		l		0
+main		.text		0		g		1
+akaText		akaText		0		l		2
+lab		akaText		0		l		3
+akaData		akaData		0		l		4
+dat		akaData		0		l		5
+
+
+SECTIONS:
+NAME		FLAGS		LOCATION COUNTER
+.text				9
+akaText		ERP		19
+akaData		RWP		2
+
+
+SECTION: .text
+54 8e 00 00 9c 00 00 00 c4 
+
+SECTION: akaText
+24 22 00 00 80 24 24 00 fe ff 14 22 24 50 24 2c 
+22 24 c4 
+
+SECTION: akaData
+00 00 
+
+Relocation table - .text
+OFFSET		TYPE			SYM.ID.
+2		R_386_16		5
+6		R_386_16		3
+
+
+Relocation table - akaText
+OFFSET		TYPE			SYM.ID.
+
+
+Relocation table - akaData
+OFFSET		TYPE			SYM.ID.
+
+
+ERRORS:
+Immed in dst operand!
